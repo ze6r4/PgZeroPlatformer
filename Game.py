@@ -4,22 +4,45 @@ from Hero import Hero
 from Platform import Platform
 
 class Game:
-    def __init__(self, width, height,clock):
+
+
+    def __init__(self, width, height,clock,sounds):
         self.WIDTH = width
         self.HEIGHT = height
-        self.hero = Hero((width/2, height/2),clock)
+
+        margin = 88
+        width_of_platform = 128
+        half_height_of_platform = 64/2
+
+        x_1 = margin
+        x_2 = margin*2 + width_of_platform 
+        x_3 = margin + 2*width_of_platform
+        x_4 = self.WIDTH - margin
+
         
+        self.hero = Hero((x_2, half_height_of_platform*3),clock,sounds)
+
+        half_of_hero = self.hero.actor.height/2
+
+        y_1 = self.HEIGHT- half_height_of_platform
+        y_2 = self.HEIGHT - (half_height_of_platform + half_of_hero)
+        y_3 = self.HEIGHT - (half_height_of_platform + half_of_hero*2)
+
+        
+        print(self.hero.actor.height,self.hero.actor.width)
+
         self.platforms = [
-            Platform((width/2, height)),
-            Platform((width/2+self.hero.actor.width*3/2,height-self.hero.actor.height/2)),
-            Platform((100,height-self.hero.actor.height/2))
+            Platform((x_2,y_1)), 
+            Platform((x_1,y_2)),
+            Platform((x_4,y_3))
         ]
         self.score = 0
         self.game_over = False
         self.bg = Actor("background_elements/blue_land")
         self.init_music()
         
-
+    def generate_platforms(self):
+        return Platform((1,1))
     def update(self, keyboard):
         if self.game_over:
             return
@@ -34,6 +57,7 @@ class Game:
 
         if self.hero.actor.y > self.HEIGHT + 100:
             self.game_over = True
+
     def on_key_down(self, keyboard):
         if keyboard.space:
             self.hero.jump()
@@ -69,3 +93,4 @@ class Game:
         if self.game_over:
             screen.draw.text(f"GAME OVER! Твой счет: {self.score}", center=(self.WIDTH/2, self.HEIGHT/2), 
                            color="black", fontsize=45)
+    

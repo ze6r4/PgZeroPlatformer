@@ -14,7 +14,8 @@ blue_color = (68,171,255)
 green_color = (146,204,0)
 red_color = (255,174,163)
 
-game = Game(WIDTH, HEIGHT,clock)
+
+game = Game(WIDTH, HEIGHT,clock,sounds)
    
 
 def update():
