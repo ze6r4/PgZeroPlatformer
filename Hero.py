@@ -3,7 +3,7 @@ from pgzero.actor import Actor
 
 class Hero:
     speed = 5
-    jump_force = -15
+    jump_force = -12
     
     stand_actor = Actor('player/alien_blue_stand')
     jump_actor = Actor('player/alien_blue_jump')
@@ -29,10 +29,9 @@ class Hero:
     GRAVITY = 0.5
 
     flip = False
-    on_ground = True
     
 
-    def __init__(self, pos,clock,sounds):
+    def __init__(self, pos,clock, sounds):
         self.actor = self.actors[self.STAND_INDEX]
         self.actor.pos = pos
         self.velocity = Vector2(0, 0)
@@ -44,14 +43,12 @@ class Hero:
 
     def update(self, platforms):
         self.velocity.y += self.GRAVITY
-        self.actor.x += self.velocity.x
-        self.check_collision_x(platforms)
         
         self.actor.y += self.velocity.y
         self.check_collision_y(platforms)
 
-        if self.velocity.x == 0:
-            self.change_actor(self.STAND_INDEX) 
+        self.actor.x += self.velocity.x
+        self.check_collision_x(platforms)
         
         
     # при столкновении с какой-либо платформой, если игрок "падает" на платформу,
@@ -63,14 +60,12 @@ class Hero:
                     if self.actor.y < platform.actor.y:
                         self.actor.bottom = platform.actor.top
                     self.on_ground = True
+                    if self.velocity.x == 0:
+                        self.change_actor(self.STAND_INDEX) # 0 - stand actor(приземление)
                     self.velocity.y = 0
-                elif self.velocity.y == 0:
-                    if self.velocity.x == 0 and self.on_ground == 0:
-                        self.change_actor(self.STAND_INDEX)
                 else:
                     if self.actor.y > platform.actor.y:
                         self.actor.top = platform.actor.bottom
-                
 
                 break
     # при столкновении с какой-либо платформой, игрок "врезается" в платформу (с боку)
@@ -108,6 +103,7 @@ class Hero:
     # принудительно останавливает движение по горизонтали 
     def stop_x(self):
         self.velocity.x = 0
+        #self.change_actor(self.STAND_INDEX)
         
 
     # смена изображений (вместо image используются actor для производительности анимации)

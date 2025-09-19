@@ -9,33 +9,17 @@ class Game:
     def __init__(self, width, height,clock,sounds):
         self.WIDTH = width
         self.HEIGHT = height
-
-        margin = 88
-        width_of_platform = 128
-        half_height_of_platform = 64/2
-
-        x_1 = margin
-        x_2 = margin*2 + width_of_platform 
-        x_3 = margin + 2*width_of_platform
-        x_4 = self.WIDTH - margin
-
         
-        self.hero = Hero((x_2, half_height_of_platform*3),clock,sounds)
-
-        half_of_hero = self.hero.actor.height/2
-
-        y_1 = self.HEIGHT- half_height_of_platform
-        y_2 = self.HEIGHT - (half_height_of_platform + half_of_hero)
-        y_3 = self.HEIGHT - (half_height_of_platform + half_of_hero*2)
-
-        
-        print(self.hero.actor.height,self.hero.actor.width)
-
         self.platforms = [
-            Platform((x_2,y_1)), 
-            Platform((x_1,y_2)),
-            Platform((x_4,y_3))
+            Platform(Platform.LEFT_PLATFORM,0), 
+            Platform(Platform.CENTER_PLATFORM,1),
+            Platform(Platform.RIGHT_PLATFORM,2)
         ]
+        
+        self.hero = Hero(
+            (Platform.get_platfrom_x(Platform.CENTER_PLATFORM), 
+             Platform.HALF_HEIGHT_OF_PLATFORM),clock,sounds
+             )
         self.score = 0
         self.game_over = False
         self.bg = Actor("background_elements/blue_land")
