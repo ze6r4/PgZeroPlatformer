@@ -37,7 +37,7 @@ class Hero:
 
         self.actors_left = [stand_actor_left,jump_actor_left,walk1_actor_left,walk2_actor_left]
 
-        self.actor = self.actors[self.STAND_INDEX]
+        self.actor =  Actor('player/alien_blue_stand')
         self.anchor = ("center", "bottom")
         self.actor.bottom = start_platform.top
         self.actor.left = start_platform.left
@@ -45,29 +45,29 @@ class Hero:
         self.clock = clock
         self.i=2
         self.clock.schedule_interval(self.change,self.ANIMATION_SPEED)
-        #self.clock.schedule_interval(self.stand,1)
+        self.clock.schedule_interval(self.stand,self.ANIMATION_SPEED)
 
     def update(self,keyboard,platforms):
         if keyboard.right or keyboard.left:
             self.is_walking = True
             self.walk_animation()
 
-        if keyboard.right:
-            self.actor.x += self.speed
-            self.flip = False
-            self.check_collision_x(platforms)
-        elif keyboard.left:
+        if keyboard.left:
             self.actor.x -= self.speed
             self.flip = True
             self.check_collision_x(platforms)
+        elif keyboard.right:
+            self.actor.x += self.speed
+            self.flip = False
+            self.check_collision_x(platforms)
+        
+        if not keyboard.right and not keyboard.left and not keyboard.space:
+            self.is_walking = False
             
         self.actor.y += self.velocity.y
         self.velocity.y += self.GRAVITY
         self.check_collision_y(platforms)
 
-    def stand(self):
-        if self.on_ground and (not self.is_walking):
-            self.change_actor(self.STAND_INDEX)
     # при столкновении с какой-либо платформой, если игрок "падает" на платформу,
     # то остается на ней. либо ударяется головой об платформу, если она сверху.
     def check_collision_y(self, platforms):
@@ -108,15 +108,19 @@ class Hero:
             self.actor.image = self.actors_left[index].image
         else:
             self.actor.image = self.actors[index].image
+            
+        self.draw()
     
     def walk_animation(self):
-        if self.velocity.y != 0: #если игрок только что прыгнул
+        if self.velocity.y != 0 or not self.on_ground: #если игрок только что прыгнул или в прыжке
             return  
-        i = self.i
-        self.change_actor(i)
+        self.change_actor(self.i)
         
-        
-        
+    
+    def stand(self):
+        if self.on_ground and (not self.is_walking):
+            self.change_actor(self.STAND_INDEX)
+
     def change(self):
         self.i = 2 if self.i == 3 else 3
 

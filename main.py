@@ -19,7 +19,7 @@ game = Game(WIDTH, HEIGHT,clock)
 music_actor = Actor("ui/music_on",(WIDTH - 30,30))
 music.play("base_theme")
 
-def update():
+def update(dt):
     if game_is_on and not game.game_over:
         game.update(keyboard)
         return
@@ -56,7 +56,6 @@ def draw():
       
     draw_menu()
     
-
     
 def draw_menu():
     screen.clear()
