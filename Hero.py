@@ -99,15 +99,15 @@ class Hero:
             self.change_actor(self.JUMP_INDEX)
             self.on_ground = False
             sounds.jump.play()
-        
-        
 
     # смена изображений (вместо image используются actor для производительности анимации)
     def change_actor(self,index):
         if self.flip:
-            self.actor.image = self.actors_left[index].image
+            self.actors_left[index].pos = self.actor.pos
+            self.actor = self.actors_left[index]
         else:
-            self.actor.image = self.actors[index].image
+            self.actors[index].pos = self.actor.pos
+            self.actor = self.actors[index]
             
         self.draw()
     
@@ -126,5 +126,3 @@ class Hero:
 
     def draw(self):
         self.actor.draw()
-
-
