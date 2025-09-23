@@ -4,7 +4,7 @@ from pgzero.clock import clock
 from Game import Game
 
 WIDTH = 1000
-HEIGHT = 800
+HEIGHT = 900
 TITLE = "Платформер"
 
 game_is_on = False

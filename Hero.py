@@ -88,7 +88,19 @@ class Hero:
                 self.actor.right = platform.left
             elif self.actor.left < platform.right and self.actor.right > platform.right:
                 self.actor.left = platform.right
+                
 
+    # "уменьшаем" размеры героя для менее строгой проверки столкновения 
+    def get_collider(self,w,h):
+        collision_width = int(self.actor.width * w)  
+        collision_height = int(self.actor.height * h)
+        hero_collider = Rect(0,0,collision_width,collision_height)
+        hero_collider.center =(self.actor.x,self.actor.y)
+        return hero_collider
+    def _platform_to_rect(self,platform):
+        rect = Rect(0,0,platform.width,platform.height)
+        rect.center = (platform.x,platform.y)
+        return rect
     def jump(self):
         if self._on_ground:
             self.velocity.y = self.jump_force 

@@ -7,15 +7,14 @@ class Map:
 
     platforms = []
     enemies = []
+    stars = []
 
     BETWEEN_PLATFORMS_Y = 130
 
     # по массиву из символов создаем платформы и врагов
     # высота платформ увеличивается с каждой новой строчкой
     # если после платформы идет платформа, то нужно собрать длинную платформу.
-    def __init__(self, map):
-        WIDTH = 1000
-        HEIGHT = 800
+    def __init__(self, WIDTH,HEIGHT, map):
         _margin = 104
         _width_of_platform = 128
         _height_of_platform = 64 
@@ -33,12 +32,14 @@ class Map:
                 next_index = x_index + 1
                 x = _margin + _width_of_platform*x_index 
                 
-                if line[x_index] in "-*":
+                if line[x_index] in "-*^":
                     image = self.__check_next_platform(line,next_index)
                     platform = Actor(f"background_elements/{image}", (x,y))
                     self.platforms.append(platform)
-                    if line[x_index] == '*':
+                    if line[x_index] == '^':
                         self.__add_enemy(platform)
+                    if line[x_index] == '*':
+                        self.__add_star(platform)
                 else:
                     self.is_long = False
     
@@ -46,7 +47,7 @@ class Map:
         if next_index >= len(line):
             image = self.__no_platform_next()
         if next_index < len(line):
-            if line[next_index] in "-*":
+            if line[next_index] in "-*^":
                 image = self.__platform_next()
             else:
                 image = self.__no_platform_next()
@@ -55,6 +56,9 @@ class Map:
     def __add_enemy(self,platform):
         enemy = Enemy(platform,clock)
         self.enemies.append(enemy)
+    def __add_star(self,platform):
+        star = Actor("background_elements/star",(platform.x,platform.y - platform.height - 20))
+        self.stars.append(star)
 
     def __no_platform_next(self):
         if self.is_long:

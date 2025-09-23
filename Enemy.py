@@ -7,11 +7,13 @@ class Enemy:
     ANIMATION_SPEED = 0.2
     SPEED = 1.7
 
-    saw = Actor("enemy/saw_half")
-    _saw1 = Actor("enemy/saw_half")
-    _saw2 = Actor("enemy/saw_half_move")
     change_index = 0
     def __init__(self, platform,clock):
+        
+        self.saw = Actor("enemy/saw_half")
+        self._saw1 = Actor("enemy/saw_half")
+        self._saw2 = Actor("enemy/saw_half_move")
+
         self.saw.bottomleft = platform.topleft
         #для столкновений с платформой опускаем чуть пониже
         self.saw.y +=5 
