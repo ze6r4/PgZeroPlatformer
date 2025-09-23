@@ -11,16 +11,12 @@ class Hero:
     JUMP_INDEX = 1
     WALK1_INDEX = 2
     WALK2_INDEX = 3
-
     ANIMATION_SPEED = 0.2
-
-
     GRAVITY = 0.5
 
-    flip = False
-    on_ground = False
-    is_walking = False
-    
+    _flip = False
+    _on_ground = False
+    _is_walking = False
 
     def __init__(self, start_platform,clock):
         stand_actor = Actor('player/alien_blue_stand')
@@ -28,61 +24,63 @@ class Hero:
         walk1_actor = Actor('player/alien_blue_walk1')
         walk2_actor = Actor('player/alien_blue_walk2')
 
-        self.actors = [stand_actor,jump_actor,walk1_actor,walk2_actor]
+        self._actors = [stand_actor,jump_actor,walk1_actor,walk2_actor]
 
         stand_actor_left = Actor('player/alien_blue_stand_left')
         jump_actor_left = Actor('player/alien_blue_jump_left')
         walk1_actor_left = Actor('player/alien_blue_walk1_left')
         walk2_actor_left = Actor('player/alien_blue_walk2_left')
 
-        self.actors_left = [stand_actor_left,jump_actor_left,walk1_actor_left,walk2_actor_left]
+        self._actors_left = [stand_actor_left,jump_actor_left,walk1_actor_left,walk2_actor_left]
 
         self.actor =  Actor('player/alien_blue_stand')
         self.anchor = ("center", "bottom")
         self.actor.bottom = start_platform.top
         self.actor.left = start_platform.left
         self.velocity = Vector2(0, 0)
-        self.clock = clock
-        self.i=2
-        self.clock.schedule_interval(self.change,self.ANIMATION_SPEED)
-        self.clock.schedule_interval(self.stand,self.ANIMATION_SPEED)
+        self._clock = clock
+
+        self._anim_index=2
+        self._clock.schedule_interval(self._change_index,self.ANIMATION_SPEED)
 
     def update(self,keyboard,platforms):
         if keyboard.right or keyboard.left:
-            self.is_walking = True
-            self.walk_animation()
+            self._is_walking = True
+            self._walk_animation()
 
         if keyboard.left:
             self.actor.x -= self.speed
-            self.flip = True
-            self.check_collision_x(platforms)
+            self._flip = True
+            self._check_collision_x(platforms)
         elif keyboard.right:
             self.actor.x += self.speed
-            self.flip = False
-            self.check_collision_x(platforms)
+            self._flip = False
+            self._check_collision_x(platforms)
         
-        if not keyboard.right and not keyboard.left and not keyboard.space:
-            self.is_walking = False
+        elif not keyboard.space:
+            self._is_walking = False
+            if self._on_ground:
+                self.change_actor(self.STAND_INDEX)
             
         self.actor.y += self.velocity.y
         self.velocity.y += self.GRAVITY
-        self.check_collision_y(platforms)
+        self._check_collision_y(platforms)
 
     # при столкновении с какой-либо платформой, если игрок "падает" на платформу,
     # то остается на ней. либо ударяется головой об платформу, если она сверху.
-    def check_collision_y(self, platforms):
+    def _check_collision_y(self, platforms):
         platform_index = self.actor.collidelist(platforms)
         if platform_index != -1:
             platform = platforms[platform_index]
             if self.velocity.y >= 0:
                 self.actor.bottom = platform.top
-                self.on_ground = True
+                self._on_ground = True
             else:
                 self.actor.top = platform.bottom
             self.velocity.y = 0
             
     # при столкновении с какой-либо платформой, игрок "врезается" в платформу (с боку)
-    def check_collision_x(self, platforms):
+    def _check_collision_x(self, platforms):
         platform_index = self.actor.collidelist(platforms)
         if platform_index != -1:
             platform = platforms[platform_index]
@@ -91,38 +89,33 @@ class Hero:
             elif self.actor.left < platform.right and self.actor.right > platform.right:
                 self.actor.left = platform.right
 
-    
-            
     def jump(self):
-        if self.on_ground:
+        if self._on_ground:
             self.velocity.y = self.jump_force 
             self.change_actor(self.JUMP_INDEX)
-            self.on_ground = False
+            self._on_ground = False
             sounds.jump.play()
 
     # смена изображений (вместо image используются actor для производительности анимации)
     def change_actor(self,index):
-        if self.flip:
-            self.actors_left[index].pos = self.actor.pos
-            self.actor = self.actors_left[index]
+        if self._flip:
+            self._actors_left[index].pos = self.actor.pos
+            self.actor = self._actors_left[index]
         else:
-            self.actors[index].pos = self.actor.pos
-            self.actor = self.actors[index]
+            self._actors[index].pos = self.actor.pos
+            self.actor = self._actors[index]
             
         self.draw()
     
-    def walk_animation(self):
-        if self.velocity.y != 0 or not self.on_ground: #если игрок только что прыгнул или в прыжке
+    def _walk_animation(self):
+        #если игрок только что прыгнул или в прыжке
+        if self.velocity.y != 0 or not self._on_ground: 
             return  
-        self.change_actor(self.i)
-        
-    
-    def stand(self):
-        if self.on_ground and (not self.is_walking):
-            self.change_actor(self.STAND_INDEX)
+        self.change_actor(self._anim_index)
 
-    def change(self):
-        self.i = 2 if self.i == 3 else 3
+    #для смены кадров
+    def _change_index(self):
+        self._anim_index = 2 if self._anim_index == 3 else 3
 
     def draw(self):
         self.actor.draw()

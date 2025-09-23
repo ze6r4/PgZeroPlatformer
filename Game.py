@@ -6,7 +6,6 @@ from Enemy import Enemy
 
 class Game:
     
-    go_long = False
     def __init__(self, width, height,clock):
         self.WIDTH = width
         self.HEIGHT = height
@@ -17,8 +16,9 @@ class Game:
         # 0 ничего нет
         # - простая платформа 
         # * платформа с пилой
-        platforms_map = ["000--00",
-                         "-000000",
+        platforms_map = ["000---",
+                         "00-000",
+                         "-00000",
                          "0-*--00",
                          "000000-",
                          "0000--0"]
@@ -39,11 +39,11 @@ class Game:
             enemy.update(self.platforms)
 
         self.hero.update(keyboard, self.platforms)
-        self.check_player_fall()
-        self.check_collision_enemy(self.enemies)
+        self._check_player_fall()
+        self._check_collision_enemy(self.enemies)
         
 
-    def check_collision_enemy(self,enemies):
+    def _check_collision_enemy(self,enemies):
         for enemy in enemies:
             if self.hero.actor.colliderect(enemy.saw):
                 collision_width = int(self.hero.actor.width * 0.7)  
@@ -57,7 +57,7 @@ class Game:
                     self.game_over = True
             
 
-    def check_player_fall(self):
+    def _check_player_fall(self):
         if self.hero.actor.y > self.HEIGHT + 100:
             self.game_over = True
 
@@ -76,9 +76,9 @@ class Game:
             enemy.draw()
         self.hero.draw()
         if self.game_over:
-            self.draw_game_over(screen)
+            self._draw_game_over(screen)
             
-    def draw_game_over(self,screen):
+    def _draw_game_over(self,screen):
         screen.draw.text(f"GAME OVER! Твой счет: {self.score}", center=(self.WIDTH/2, self.HEIGHT/2), 
                         color="black", fontsize=45)
         return

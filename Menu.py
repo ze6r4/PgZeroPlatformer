@@ -6,6 +6,7 @@ from Game import Game
 WIDTH = 1000
 HEIGHT = 800
 TITLE = "Платформер"
+
 game_is_on = False
 start_button = Rect(WIDTH/2-50, HEIGHT/2-100, 100, 50)
 exit_button = Rect(WIDTH/2-50, HEIGHT/2, 100, 50)
@@ -13,7 +14,6 @@ exit_button = Rect(WIDTH/2-50, HEIGHT/2, 100, 50)
 blue_color = (68,171,255)
 green_color = (146,204,0)
 red_color = (255,174,163)
-
 
 game = Game(WIDTH, HEIGHT,clock)
 music_actor = Actor("ui/music_on",(WIDTH - 30,30))
@@ -38,7 +38,6 @@ def on_key_down():
     if game_is_on:
         game.on_key_down(keyboard)
 
-
 def music_button():
     if music_actor.image == "ui/music_on":
         music.pause()
@@ -53,11 +52,10 @@ def draw():
         screen.clear()
         game.draw(screen) 
         return
-      
-    draw_menu()
+    _draw_menu()
     
     
-def draw_menu():
+def _draw_menu():
     screen.clear()
     bg = Actor("background_elements/colored_land")
     bg.draw()

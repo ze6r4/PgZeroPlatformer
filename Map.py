@@ -7,52 +7,62 @@ class Map:
 
     platforms = []
     enemies = []
-    
 
-    # по массиву из символов создаем платформы 
+    BETWEEN_PLATFORMS_Y = 130
+
+    # по массиву из символов создаем платформы и врагов
+    # высота платформ увеличивается с каждой новой строчкой
+    # если после платформы идет платформа, то нужно собрать длинную платформу.
     def __init__(self, map):
         WIDTH = 1000
         HEIGHT = 800
-        margin = 104
-        width_of_platform = 128
-        height_of_platform = 64 
-        half_of_hero = Actor('player/alien_blue_stand').height/2
-        between_platforms = 120
+        _margin = 104
+        _width_of_platform = 128
+        _height_of_platform = 64 
+        _half_of_hero = Actor('player/alien_blue_stand').height/2 
 
+        _y_index = 0
+        for i in range(len(map)-1,-1,-1):
+            line = map[i]
+            y = HEIGHT - (_y_index * self.BETWEEN_PLATFORMS_Y) - _half_of_hero
+            _y_index += 1
 
-        y_index = 0
-        for i in range(len(map)-1,0,-1):
-            c = map[i]
-            y = HEIGHT - (y_index * between_platforms) - half_of_hero
-            y_index += 1
             self.is_long = False
             image = "grass_small"
-            for x_index in range(len(c)):
+            for x_index in range(len(line)):
                 next_index = x_index + 1
-                x = margin + width_of_platform*x_index 
-                if c[x_index] in "-*":
-                    if next_index >= len(c):
-                        image = self._no_platform_next()
-                    if next_index < len(c):
-                        if c[next_index] in "-*":
-                            image = self._platform_next()
-                        else:
-                            image = self._no_platform_next()
-                    
+                x = _margin + _width_of_platform*x_index 
+                
+                if line[x_index] in "-*":
+                    image = self.__check_next_platform(line,next_index)
                     platform = Actor(f"background_elements/{image}", (x,y))
                     self.platforms.append(platform)
-                    if c[x_index] == '*':
-                        enemy = Enemy(platform,clock)
-                        self.enemies.append(enemy)
+                    if line[x_index] == '*':
+                        self.__add_enemy(platform)
                 else:
                     self.is_long = False
-    def _no_platform_next(self):
+    
+    def __check_next_platform(self,line,next_index):
+        if next_index >= len(line):
+            image = self.__no_platform_next()
+        if next_index < len(line):
+            if line[next_index] in "-*":
+                image = self.__platform_next()
+            else:
+                image = self.__no_platform_next()
+        return image
+    
+    def __add_enemy(self,platform):
+        enemy = Enemy(platform,clock)
+        self.enemies.append(enemy)
+
+    def __no_platform_next(self):
         if self.is_long:
             self.is_long = False
             return "grass_right"
         return "grass_small"
     
-    def _platform_next(self):
+    def __platform_next(self):
         if self.is_long == False:
             self.is_long = True
             return "grass_left"
